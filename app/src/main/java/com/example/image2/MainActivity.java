@@ -55,7 +55,9 @@ public class MainActivity extends AppCompatActivity {
         galleryAdapter = new GalleryAdapter(this, images, new GalleryAdapter.PhotoListener() {
             @Override
             public void onPhotoClick(String path) {
-                Toast.makeText(MainActivity.this, ""+path, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(MainActivity.this, ""+path, Toast.LENGTH_SHORT).show();
+                String[] way= path.split("\\.");
+                Toast.makeText(MainActivity.this, ""+way[1], Toast.LENGTH_SHORT).show();
             }
         });
         recyclerView.setAdapter(galleryAdapter);
