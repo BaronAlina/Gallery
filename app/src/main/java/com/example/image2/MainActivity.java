@@ -14,6 +14,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.ContextMenu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -30,6 +32,10 @@ public class MainActivity extends AppCompatActivity {
     GalleryAdapter galleryAdapter;
     List<String> images;
     TextView gallery_number;
+    Button btn;
+    final int PNG=1;
+    final int JPG=2;
+    final int JPEG=3;
 
     private static final int MY_READ_PERMISSION_CODE = 101;
 
@@ -38,6 +44,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        btn=findViewById(R.id.button);
+        btn.setOnCreateContextMenuListener(this);
+//        btn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//            }
+//        });
         gallery_number = findViewById(R.id.gallery_number);
         recyclerView=findViewById(R.id.recyclerview_gallery_images);
 
@@ -48,22 +62,69 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void loadImages(){
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        switch (v.getId()){
+            case R.id.button:
+                menu.add(0, PNG, 0, "png");
+                menu.add(1, JPG, 1, "jpg");
+                menu.add(2, JPEG, 2, "jpeg");
+        }
+    }
+
+    int format=0;
+    @Override
+    public boolean onContextItemSelected(@NonNull MenuItem item) {
+//        ImagesGallery imagesGallery = new ImagesGallery();
+//        Intent intent = new Intent();
+        switch (item.getItemId()){
+            case PNG:
+                format = PNG;
+//                imagesGallery.listOfImages(this, PNG);
+//                intent.putExtra("format", PNG);
+//                intent.setClass(MainActivity.this, ImagesGallery.class);
+//                startActivity(intent);
+                break;
+            case JPG:
+                format=JPG;
+//                imagesGallery.listOfImages(this, JPG);
+//                intent.putExtra("format", JPG);
+//                intent.setClass(MainActivity.this, ImagesGallery.class);
+//                startActivity(intent);
+                break;
+            case JPEG:
+                format=JPEG;
+//                imagesGallery.listOfImages(this, JPEG);
+//                intent.putExtra("format", JPEG);
+//                intent.setClass(MainActivity.this, ImagesGallery.class);
+//                startActivity(intent);
+                break;
+
+        }
+        loadImages();
+        return super.onContextItemSelected(item);
+    }
+
+    public void loadImages(){
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 4));
-        images = ImagesGallery.listOfImages(this);
+        images = ImagesGallery.listOfImages(this, format);
         galleryAdapter = new GalleryAdapter(this, images, new GalleryAdapter.PhotoListener() {
             @Override
             public void onPhotoClick(String path) {
                 //Toast.makeText(MainActivity.this, ""+path, Toast.LENGTH_SHORT).show();
                 String[] way= path.split("\\.");
-                Toast.makeText(MainActivity.this, ""+way[1], Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, ""+way[way.length-1], Toast.LENGTH_SHORT).show();
             }
         });
         recyclerView.setAdapter(galleryAdapter);
 
         gallery_number.setText("Photos ("+images.size()+")");
     }
+
+//    public void format1(int a){
+//        loadImages();
+//    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -78,5 +139,4 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
 }
